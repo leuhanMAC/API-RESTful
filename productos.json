@@ -1,1 +1,44 @@
-[]
+[
+  {
+    "title": "aBaaD",
+    "price": 123,
+    "thumbnail": "https://asd.com/ee.jpg",
+    "id": 1
+  },
+  {
+    "title": "aBaaD",
+    "price": 123,
+    "thumbnail": "https://asd.com/ee.jpg",
+    "id": 2
+  },
+  {
+    "title": "aBaaD",
+    "price": 123,
+    "thumbnail": "https://asd.com/ee.jpg",
+    "id": 4
+  },
+  {
+    "title": "aBaaD",
+    "price": 123,
+    "thumbnail": "https://asd.com/ee.jpg",
+    "id": 5
+  },
+  {
+    "title": "aBaaD",
+    "price": 123,
+    "thumbnail": "https://asd.com/ee.jpg",
+    "id": 6
+  },
+  {
+    "title": "aBaaD",
+    "price": 123,
+    "thumbnail": "https://asd.com/ee.jpg",
+    "id": 7
+  },
+  {
+    "title": "asd",
+    "price": 123,
+    "thumbnail": "https://asd.com/e.jpg",
+    "id": 8
+  }
+]

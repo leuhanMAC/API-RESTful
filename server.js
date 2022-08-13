@@ -23,7 +23,9 @@ const postMiddleware = (req, res, next) => {
         res.end();
         return;
     }
+
     next();
+
 };
 
 const urlMiddleware = (req, res, next) => {
@@ -31,6 +33,7 @@ const urlMiddleware = (req, res, next) => {
     const { thumbnail } = req.body;
     if (!thumbnail) {
         next();
+        return;
     } else if (!patternURL.test(thumbnail)) {
         res.status(400).json({
             error: 'La URL no está en un formato válido (Debe empezar con el protocolo HTTP y terminar en jpg/gif/png/jpeg/webp)'
@@ -44,17 +47,24 @@ const urlMiddleware = (req, res, next) => {
 }
 
 const priceMiddleware = (req, res, next) => {
+
     const patternPrice = /^(?=.*[1-9])[0-9]*[.]?[0-9]{1,2}$/;
-    req.body.price = Number(req.body.price);
-    if (!req.body.price) {
+    if(req.body.price) {
+        req.body.price = Number(req.body.price);
+
+        if (!patternPrice.test(req.body.price)) {
+            res.status(400).json({
+                error: 'El precio no está en un formato válido (Debe ser un número con máximo dos decimales)'
+            });
+            res.end();
+            return;
+        }
+
+    } else if (!req.body.price) {
         next();
-    } else if (!patternPrice.test(req.body.price)) {
-        res.status(400).json({
-            error: 'El precio no está en un formato válido (Debe ser un número con máximo dos decimales)'
-        });
-        res.end();
         return;
     }
+
     next();
 }
 
@@ -64,25 +74,33 @@ const putMiddleware = (req, res, next) => {
     if (!title && !price && !thumbnail) {
         res.status(400).json({
             error: 'Faltan datos'
-        }).end();
+        });
+        res.end();
         return;
     }
+
     next();
 }
 
 router.get('/', async (req, res) => {
     const productos = await productFiles.getAll();
+
     res.json(productos);
+    res.end();
+
 });
 
 router.get('/:id', async (req, res) => {
-    const producto = await productFiles.getById(req.params.id);
+    const producto = await productFiles.getById(Number(req.params.id));
 
     producto 
     ? res.json(producto) 
     : res.status(404).json({
         error: 'Producto no encontrado'
     });
+
+    res.end();
+
 });
 
 router.post('/', postMiddleware, urlMiddleware, priceMiddleware, async (req, res) => {
@@ -99,7 +117,9 @@ router.post('/', postMiddleware, urlMiddleware, priceMiddleware, async (req, res
         mensaje: 'Producto creado',
         producto
     });
+
     res.end();
+
 });
 
 router.put('/:id', putMiddleware, urlMiddleware, priceMiddleware, async (req, res) => {
@@ -114,8 +134,8 @@ router.put('/:id', putMiddleware, urlMiddleware, priceMiddleware, async (req, re
     const productoRes = await productFiles.updateById(producto);
 
     productoRes 
-    ? res.json({
-        mensaje: 'Producto editado', 
+    ? res.send({
+        mensaje: 'Producto editado',
         producto: productoRes
     })
     : res.status(404).json({
@@ -123,6 +143,7 @@ router.put('/:id', putMiddleware, urlMiddleware, priceMiddleware, async (req, re
     });
 
     res.end();
+
 });
 
 router.delete('/:id', async (req, res) => {
@@ -130,7 +151,7 @@ router.delete('/:id', async (req, res) => {
 
     const producto = await productFiles.deleteById(Number(id));
 
-    producto 
+    producto
     ? res.json({
         mensaje: 'Producto eliminado',
         producto
@@ -140,6 +161,7 @@ router.delete('/:id', async (req, res) => {
     });
 
     res.end();
+
 });
 
 const PORT = process.env.PORT || 8080;
